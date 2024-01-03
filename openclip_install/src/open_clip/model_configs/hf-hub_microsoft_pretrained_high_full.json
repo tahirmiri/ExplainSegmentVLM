@@ -1,0 +1,17 @@
+{
+    "embed_dim": 768,
+    "vision_cfg": {
+      "timm_model_name": "vit_base_patch16_384",
+      "timm_model_pretrained": true,
+      "timm_pool": "",
+      "timm_proj": "linear",
+      "image_size": 384
+    },
+    "text_cfg": {
+      "hf_model_name": "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext",
+      "hf_tokenizer_name": "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext",
+      "proj": "mlp",
+      "pooler_type": "cls_last_hidden_state_pooler",
+      "context_length": 256
+    }
+  }

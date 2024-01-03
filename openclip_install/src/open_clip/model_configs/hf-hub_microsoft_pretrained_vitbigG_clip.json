@@ -1,0 +1,18 @@
+{
+    "embed_dim": 1280,
+    "vision_cfg": {
+        "image_size": 224,
+        "layers": 48,
+        "width": 1664,
+        "head_width": 104,
+        "mlp_ratio": 4.9231,
+        "patch_size": 14
+    },
+    "text_cfg": {
+      "hf_model_name": "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract",
+      "hf_tokenizer_name": "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract",
+      "proj": "mlp",
+      "pooler_type": "cls_last_hidden_state_pooler",
+      "context_length": 256
+    }
+  }
