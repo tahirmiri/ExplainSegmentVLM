@@ -63,7 +63,7 @@ def show_attention_map(heatmap, image_path: str,save_path,keyword,filename):
     axes[1].imshow(img[..., ::-1])
     axes[2].imshow((result_img / 255)[..., ::-1])
 
-    plt.savefig(save_path + f"GradCAM_{filename}_{keyword}.png")
+    plt.savefig(save_path + f"/{filename}_{keyword}_GradCAM.png")
     #plt.show()
     
     return result_img  # this is the line I added 

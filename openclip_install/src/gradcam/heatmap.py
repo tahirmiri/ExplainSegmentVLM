@@ -71,6 +71,7 @@ def get_heatmap(
     with torch.cuda.amp.autocast(), torch.autograd.set_detect_anomaly(
         True
     ), torch.set_grad_enabled(True), Hook(layer) as hook:
+        
         image_features = model.encode_image(input)
         text_features = model.encode_text(target)
 

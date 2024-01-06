@@ -25,7 +25,7 @@ def get_layer(model):
         return model.visual.transformer.resblocks[-1].ln_1
     return None
 
-def grad_cam(model, preprocessor,tokenizer,image_path, caption_text):
+def grad_cam(model, preprocessor,tokenizer,img_path, caption_text,device):
 #def grad_cam(model_name, pretrain_tag, image_path, caption_text):
     # if model_name.startswith(HF_HUB_PREFIX):
     #     model, preprocess = open_clip.create_model_from_pretrained(model_name)
@@ -42,13 +42,16 @@ def grad_cam(model, preprocessor,tokenizer,image_path, caption_text):
     #         f"Executing gradcam for model '{model_name}' - '{pretrain_tag}' with image '{image_path}' and caption '{caption_text}'"
     #     )
 
-    model = model 
+    model = model
+    model = model.to(device)
     preprocess = preprocessor
     tokenizer = tokenizer
 
-    image = preprocess(Image.open(image_path)).unsqueeze(0)
+    image = preprocess(Image.open(img_path)).unsqueeze(0)
+    image = image.to(device, non_blocking=True)
+
     #caption = tokenizer([caption_text])
-    caption = tokenizer(caption_text)
+    caption = tokenizer(caption_text).to(device=device)
 
 
     heatmap = get_heatmap(
