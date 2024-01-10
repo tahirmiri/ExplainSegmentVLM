@@ -58,7 +58,7 @@ nvidia-nccl-cu12==2.18.1
 nvidia-nvjitlink-cu12==12.3.101
 nvidia-nvtx-cu12==12.1.105
 ## !! Could not determine repository location
--e /p/project/medvl/users/tahir/ExplainSegmentVLM/openclip_install
+-e ExplainSegmentVLM/openclip_install
 packaging==23.2
 pandas==2.0.3
 parso==0.8.3
@@ -118,3 +118,4 @@ wcwidth==0.2.12
 weasel==0.3.4
 webdataset==0.2.86
 zipp==3.17.0
+opencv-python
