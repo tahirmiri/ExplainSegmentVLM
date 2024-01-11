@@ -11,7 +11,7 @@ import numpy as np
 import cv2
 from open_clip.timm_model import TimmModel
 
-def old_rollout(attentions, discard_ratio, head_fusion):
+def rollout(attentions, discard_ratio, head_fusion):
     #print("attentions length", len(attentions))
     result = torch.eye(attentions[0].size(-1))
     with torch.no_grad():
@@ -59,6 +59,7 @@ class VITAttentionRollout:
             for module in model.visual.trunk.blocks:
                 module.attn.fused_attn = False
                 #print("fused_attn",module.attn.fused_attn)
+                
         for name, module in model.visual.trunk.blocks.named_modules():
             if attention_layer_name in name:
                 #print(name)
@@ -74,17 +75,9 @@ class VITAttentionRollout:
         discard_ratio=0.9):
         #print("input_tensor shape",input_tensor.shape)
         self.attentions = []
-        self.q = []
-        self.k = []
+        
         with torch.no_grad():
             output = model.visual(input_tensor)
-            
-        for q,k in zip(self.q, self.k):
-            q = q * model.visual.trunk.blocks[0].attn.scale
-            attn = q @ k.transpose(-2, -1)
-            attn = attn.softmax(dim=-1)
-            #print("attn shape after calculation",attn.shape)
-            self.attentions.append(attn.cpu().squeeze())
-            print(attn)
+ 
 
-        return old_rollout(self.attentions, discard_ratio, head_fusion)
+        return rollout(self.attentions, discard_ratio, head_fusion)

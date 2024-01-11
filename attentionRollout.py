@@ -61,12 +61,12 @@ if __name__ == '__main__':
         input_tensor = input_tensor.cuda()
       
 
-    if args.category_index is None:
-        print("Doing Attention Rollout")
-        attention_rollout = VITAttentionRollout(model)
-        mask = attention_rollout(model,input_tensor,head_fusion=args.head_fusion, 
-            discard_ratio=args.discard_ratio)
-        name = "attention_rollout_{:.3f}_{}.png".format(args.discard_ratio, args.head_fusion)
+    print("Doing Attention Rollout")
+    attention_rollout = VITAttentionRollout(model)
+    mask = attention_rollout(model,input_tensor,head_fusion=args.head_fusion, 
+        discard_ratio=args.discard_ratio)
+    cv2.imwrite("mask.png",mask)
+    name = "attention_rollout_{:.3f}_{}.png".format(args.discard_ratio, args.head_fusion)
     
     np_img = np.array(img)
     if len(np_img.shape) == 2:
