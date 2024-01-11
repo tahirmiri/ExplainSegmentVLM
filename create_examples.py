@@ -16,7 +16,7 @@ import open_clip
 
 from open_clip import create_model_and_transforms, get_tokenizer
 
-from src.rollout.old_rollout import VITAttentionRollout
+from rollout.vit_rollout import VITAttentionRollout
 
 import torch 
 if torch.cuda.is_available():

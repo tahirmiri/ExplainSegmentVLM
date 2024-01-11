@@ -10,11 +10,10 @@ from torchvision import transforms
 import numpy as np
 import cv2
 
-import open_clip
 
 from open_clip import create_model_and_transforms, get_tokenizer
 
-from src.rollout.old_rollout import VITAttentionRollout
+from rollout.vit_rollout import VITAttentionRollout
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--use_cuda', action='store_true', default=False,
@@ -50,10 +49,11 @@ if __name__ == '__main__':
     image_name = "sample_meddata/PMC1266360_4852746.jpg"
 
     model, preprocess_train, preprocess_val = create_model_and_transforms("hf-hub_microsoft_pretrained_laion_large", pretrained="/dhc/home/martin.preiss/ExplainSegmentVLM/newest_caption_title_umls_sentence_umls.pt") 
-    tokenizer = open_clip.get_tokenizer("hf-hub_microsoft_pretrained_laion_large")
+    tokenizer = get_tokenizer("hf-hub_microsoft_pretrained_laion_large")
     
-    print(model)
-    print(type(model))
+    #print(model)
+    #print(type(model))
+    #print("model visual type",type(model.visual))
     img = Image.open(image_name)
     input_tensor = preprocess_train(img).unsqueeze(0)
 

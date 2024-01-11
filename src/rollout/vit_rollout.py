@@ -9,13 +9,13 @@ import sys
 from torchvision import transforms
 import numpy as np
 import cv2
+from open_clip.timm_model import TimmModel
 
 def old_rollout(attentions, discard_ratio, head_fusion):
     #print("attentions length", len(attentions))
     result = torch.eye(attentions[0].size(-1))
     with torch.no_grad():
         for attention in attentions:
-            #print(attention.shape)
             #print("attention shape",attention.shape)
             if head_fusion == "mean":
                 attention_heads_fused = attention.mean(axis=0)
@@ -53,32 +53,22 @@ def old_rollout(attentions, discard_ratio, head_fusion):
 
 class VITAttentionRollout:
     def __init__(self, model, attention_layer_name='attn_drop'):
-        q_name = "q_norm"
-        k_name = "k_norm"
+        
+        if isinstance(model.visual,TimmModel):
+            #important  for grapping the attn_maps with attn_drop layer
+            for module in model.visual.trunk.blocks:
+                module.attn.fused_attn = False
+                #print("fused_attn",module.attn.fused_attn)
         for name, module in model.visual.trunk.blocks.named_modules():
-            if q_name in name:
+            if attention_layer_name in name:
                 #print(name)
-                module.register_forward_hook(self.get_q)
-            if k_name in name:
-                #print(name)
-                module.register_forward_hook(self.get_k)
-
+                module.register_forward_hook(self.get_attention)
+                
         self.attentions = []
-        self.q = []
-        self.k = []
 
     def get_attention(self, module, input, output):
         #print("layer called")
         self.attentions.append(input[0].cpu().squeeze())
-    
-    def get_k(self, module, input, output):
-        #print("k output shape", output.shape)
-        self.k.append(output.cpu().squeeze())
-        
-        
-    def get_q(self, module, input, output):
-        #print("q_shape",output.shape)
-        self.q.append(output.cpu().squeeze())
         
     def __call__(self, model, input_tensor,head_fusion="mean",
         discard_ratio=0.9):
@@ -86,7 +76,6 @@ class VITAttentionRollout:
         self.attentions = []
         self.q = []
         self.k = []
-        
         with torch.no_grad():
             output = model.visual(input_tensor)
             
