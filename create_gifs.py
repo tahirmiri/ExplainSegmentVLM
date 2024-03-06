@@ -7,7 +7,7 @@ image_names = ["PMC1266360_4852746.jpg","PMC1435922_4842084.jpg","PMC3166809_651
 head_fusions = ["mean","max","min"] 
         
 for image_name in image_names:    
-    path_to_rollout = "medAttentionRollout/"  + image_name[:-4] + "/"
+    path_to_rollout = "/p/project/medvl/users/tahir/ExplainSegmentVLM/saliencies/PMC1266360_4852746/attention_rollout/"  + image_name[:-4] + "/"
     att_imgs = [path_to_rollout + name for name in sorted(os.listdir(path_to_rollout))]
     print(image_name)
     for head_fusion in head_fusions:

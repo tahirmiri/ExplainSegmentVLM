@@ -12,8 +12,9 @@ import cv2
 
 
 from open_clip import create_model_and_transforms, get_tokenizer
+from src.rollout.vit_rollout import VITAttentionRollout
 
-from rollout.vit_rollout import VITAttentionRollout
+
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--use_cuda', action='store_true', default=False,
@@ -39,16 +40,19 @@ def get_args():
 def show_mask_on_image(img, mask):
     img = np.float32(img) / 255
     heatmap = cv2.applyColorMap(np.uint8(255 * mask), cv2.COLORMAP_JET)
+    cv2.imwrite("/p/project/medvl/users/tahir/ExplainSegmentVLM/saliencies/PMC1266360_4852746/attention_rollout/heatmap_notnormal.png",heatmap)
     heatmap = np.float32(heatmap) / 255
+    cv2.imwrite("/p/project/medvl/users/tahir/ExplainSegmentVLM/saliencies/PMC1266360_4852746/attention_rollout/heatmap_normalized.png",heatmap)
     cam = heatmap + np.float32(img)
     cam = cam / np.max(cam)
+    cv2.imwrite("/p/project/medvl/users/tahir/ExplainSegmentVLM/saliencies/PMC1266360_4852746/attention_rollout/cam.png",cam)
     return np.uint8(255 * cam)
 
 if __name__ == '__main__':
     args = get_args()
-    image_name = "sample_meddata/PMC1266360_4852746.jpg"
+    image_name = "/p/project/medvl/users/tahir/ExplainSegmentVLM/sample_meddata/PMC1266360_4852746.jpg"
 
-    model, preprocess_train, preprocess_val = create_model_and_transforms("hf-hub_microsoft_pretrained_laion_large", pretrained="/dhc/home/martin.preiss/ExplainSegmentVLM/newest_caption_title_umls_sentence_umls.pt") 
+    model, preprocess_train, preprocess_val = create_model_and_transforms("hf-hub_microsoft_pretrained_laion_large", pretrained="/p/project/medvl/models/newest_caption_title_umls_sentence_umls.pt") 
     tokenizer = get_tokenizer("hf-hub_microsoft_pretrained_laion_large")
     
     #print(model)
@@ -65,8 +69,8 @@ if __name__ == '__main__':
     attention_rollout = VITAttentionRollout(model)
     mask = attention_rollout(model,input_tensor,head_fusion=args.head_fusion, 
         discard_ratio=args.discard_ratio)
-    cv2.imwrite("mask.png",mask)
-    name = "attention_rollout_{:.3f}_{}.png".format(args.discard_ratio, args.head_fusion)
+    #cv2.imwrite("/p/project/medvl/users/tahir/ExplainSegmentVLM/saliencies/PMC1266360_4852746/attention_rollout/mask.png",mask)
+    name = "/p/project/medvl/users/tahir/ExplainSegmentVLM/saliencies/PMC1266360_4852746/attention_rollout/attention_rollout_{:.3f}_{}.png".format(args.discard_ratio, args.head_fusion)
     
     np_img = np.array(img)
     if len(np_img.shape) == 2:
@@ -75,6 +79,7 @@ if __name__ == '__main__':
         
     np_img = np_img[:, :, ::-1] #reorder rgb channels
     mask = cv2.resize(mask, (np_img.shape[1], np_img.shape[0]))
+    #cv2.imwrite("/p/project/medvl/users/tahir/ExplainSegmentVLM/saliencies/PMC1266360_4852746/attention_rollout/resized_mask.png",mask)
     mask = show_mask_on_image(np_img, mask)
     cv2.imwrite(name, mask)
     
